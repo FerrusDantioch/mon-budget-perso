@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Budget">
 
-    <!-- Chart.js (Chargement unique, mis en cache par le SW si déployé en PWA) -->
+    <!-- Chart.js (Nécessite internet au premier chargement, puis mis en cache par le SW) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -54,7 +54,7 @@
             line-height: 1.6;
             padding: 15px;
             transition: background-color 0.3s, color 0.3s;
-            padding-bottom: 80px; /* Espace pour le footer si nécessaire */
+            padding-bottom: 80px;
         }
 
         .container { max-width: 600px; margin: 0 auto; }
@@ -168,6 +168,7 @@
             padding: 10px;
             border-radius: 6px;
             color: var(--text-color);
+            transition: all 0.3s;
         }
         .alert {
             background-color: rgba(231, 76, 60, 0.1);
@@ -207,4 +208,602 @@
             text-align: center; font-size: 0.9rem; display: none;
         }
         .message-box.success { background-color: rgba(39, 174, 96, 0.2); color: var(--success-color); display: block; }
-        .message-box.error { background-color: rgba(231, 76,
+        .message-box.error { background-color: rgba(231, 76, 60, 0.2); color: var(--danger-color); display: block; }
+
+        /* --- PWA INSTALL --- */
+        .pwa-section { text-align: center; }
+        #installHint { font-size: 0.8rem; color: var(--subtitle-color); margin-top: 10px; line-height: 1.4; }
+
+        footer { text-align: center; font-size: 0.8rem; color: var(--subtitle-color); margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>💰 Mon Budget</h1>
+            <p class="subtitle">Gestion locale et sécurisée</p>
+        </header>
+
+        <!-- Navigation par onglets -->
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="openTab('home')">🏠 Accueil</button>
+            <button class="tab-btn" onclick="openTab('analysis')">📊 Analyse</button>
+            <button class="tab-btn" onclick="openTab('data')">💾 Données</button>
+        </nav>
+
+        <!-- ONGLET 1 : ACCUEIL -->
+        <div id="home" class="tab-content active">
+            <section class="card config-section">
+                <h2>⚙️ Configuration du Budget</h2>
+                <div class="form-group">
+                    <label for="budgetMax">Budget Mensuel Max (€) :</label>
+                    <input type="number" id="budgetMax" placeholder="Ex: 1500" inputmode="decimal">
+                    <!-- CORRECTION : L'ID est unique et clair -->
+                    <button id="btnSaveBudget" class="btn btn-secondary">Enregistrer le budget</button>
+                </div>
+                <!-- Zone d'affichage du budget -->
+                <div id="budgetStatus" class="status-info">
+                    Budget actuel : <span id="displayBudget">0</span> €
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>➕ Ajouter une dépense</h2>
+                <form id="expenseForm">
+                    <div class="form-group">
+                        <label for="amount">Montant (€) :</label>
+                        <input type="number" id="amount" step="0.01" required placeholder="Ex: 50.00" inputmode="decimal">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Catégorie :</label>
+                        <select id="category" required>
+                            <option value="Alimentation">Alimentation</option>
+                            <option value="Logement">Logement</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Loisirs">Loisirs</option>
+                            <option value="Santé">Santé</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date :</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter la dépense</button>
+                </form>
+            </section>
+            
+            <section class="card">
+                <h2>📋 Dernières dépenses</h2>
+                <ul id="expenseList" class="expense-list">
+                    <!-- Les dépenses s'afficheront ici -->
+                </ul>
+            </section>
+        </div>
+
+        <!-- ONGLET 2 : ANALYSE -->
+        <div id="analysis" class="tab-content">
+            <section class="card chart-section">
+                <h2>📊 Répartition des dépenses</h2>
+                <div class="chart-container">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+                <div id="summaryText" style="margin-top: 20px; font-size: 0.9rem; line-height: 1.5; color: var(--text-color);">
+                    <!-- Résumé textuel généré par JS -->
+                </div>
+            </section>
+        </div>
+
+        <!-- ONGLET 3 : DONNÉES & PARAMÈTRES -->
+        <div id="data" class="tab-content">
+            <section class="card backup-section">
+                <h2>💾 Sauvegarde & Restauration</h2>
+                <p class="backup-desc">Protégez vos données en les exportant sur votre appareil.</p>
+                <div class="backup-buttons">
+                    <button id="btnExport" class="btn btn-success">💾 Sauvegarder mes données</button>
+                    <button id="btnImportTrigger" class="btn btn-warning">📂 Restaurer une sauvegarde</button>
+                    <input type="file" id="fileInput" accept=".json" style="display: none;">
+                </div>
+                <div id="backupMessage" class="message-box"></div>
+            </section>
+
+            <section class="card settings-section">
+                <h2>🎨 Apparence</h2>
+                <div class="form-group">
+                    <label for="themeSelect">Choisir le thème :</label>
+                    <select id="themeSelect" class="btn btn-secondary" style="text-align: left;">
+                        <option value="system">🖥️ Comme le système</option>
+                        <option value="light">☀️ Mode Clair</option>
+                        <option value="dark">🌙 Mode Sombre</option>
+                    </select>
+                </div>
+            </section>
+
+            <section class="card pwa-section">
+                <h2>📲 Installation</h2>
+                <p class="backup-desc">Installez l'application pour y accéder rapidement sans navigateur.</p>
+                <button id="btnInstall" class="btn btn-primary" style="display: none;">📲 Installer l'application</button>
+                <p id="installHint" style="font-size: 0.8rem; color: var(--subtitle-color); margin-top: 10px;">
+                    Si le bouton n'apparaît pas, utilisez le menu de votre navigateur :<br>
+                    <strong>Chrome:</strong> Menu (⋮) > "Installer l'appli"<br>
+                    <strong>Safari (iOS):</strong> Partager > "Sur l'écran d'accueil"
+                </p>
+            </section>
+
+            <footer>
+                <p>Données stockées localement dans votre navigateur.<br>Version 1.2 (Correction Budgétaire Immédiate)</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // --- GESTION DES DONNÉES (INDEXEDDB) ---
+        let db;
+        let chartInstance = null;
+        const DB_NAME = 'BudgetAppDB';
+        const DB_VERSION = 2;
+        const STORE_NAME = 'expenses';
+        const SETTINGS_STORE = 'settings';
+
+        // Éléments DOM
+        const expenseForm = document.getElementById('expenseForm');
+        const expenseList = document.getElementById('expenseList');
+        const budgetInput = document.getElementById('budgetMax');
+        const btnSaveBudget = document.getElementById('btnSaveBudget');
+        const displayBudgetSpan = document.getElementById('displayBudget');
+        const budgetStatusDiv = document.getElementById('budgetStatus');
+        const backupMessage = document.getElementById('backupMessage');
+        const summaryText = document.getElementById('summaryText');
+        
+        const btnExport = document.getElementById('btnExport');
+        const btnImportTrigger = document.getElementById('btnImportTrigger');
+        const fileInput = document.getElementById('fileInput');
+        const themeSelect = document.getElementById('themeSelect');
+
+        document.getElementById('date').valueAsDate = new Date();
+
+        // Ouverture BDD
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onupgradeneeded = (event) => {
+            db = event.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+            }
+            if (!db.objectStoreNames.contains(SETTINGS_STORE)) {
+                const settingsStore = db.createObjectStore(SETTINGS_STORE, { keyPath: 'key' });
+                settingsStore.put({ key: 'budgetMax', value: 0 });
+            }
+        };
+
+        request.onsuccess = (event) => {
+            db = event.target.result;
+            console.log("BDD ouverte avec succès");
+            loadBudget(); 
+            loadExpenses(); 
+        };
+
+        request.onerror = (event) => {
+            console.error("Erreur BDD:", event.target.errorCode);
+        };
+
+        // ==========================================================
+        // CORRECTION CRITIQUE : GESTION DU BUDGET
+        // ==========================================================
+
+        // 1. Fonction explicite pour mettre à jour l'AFFICHAGE uniquement
+        function updateBudgetDisplayUI(newValue) {
+            // Mise à jour directe du texte
+            displayBudgetSpan.textContent = parseFloat(newValue).toFixed(2);
+            
+            // Mise à jour des alertes et calculs associés
+            updateTotalAlert(); 
+            
+            // Feedback visuel temporaire
+            const originalBg = budgetStatusDiv.style.backgroundColor;
+            budgetStatusDiv.style.backgroundColor = 'rgba(39, 174, 96, 0.2)'; // Vert flash
+            setTimeout(() => {
+                budgetStatusDiv.style.backgroundColor = ''; // Retour à la normale
+            }, 300);
+        }
+
+        // 2. Écouteur d'événement pour le bouton "Enregistrer"
+        btnSaveBudget.addEventListener('click', () => {
+            const inputValue = budgetInput.value;
+            const newValue = parseFloat(inputValue);
+
+            if (!db) {
+                alert("La base de données n'est pas prête. Réessayez.");
+                return;
+            }
+
+            if (isNaN(newValue) || newValue < 0) {
+                alert("Veuillez entrer un montant valide (≥ 0).");
+                return;
+            }
+
+            // Transaction IndexedDB
+            const transaction = db.transaction([SETTINGS_STORE], 'readwrite');
+            const store = transaction.objectStore(SETTINGS_STORE);
+            const putRequest = store.put({ key: 'budgetMax', value: newValue });
+
+            // SUCCÈS DE L'ÉCRITURE EN BASE DE DONNÉES
+            putRequest.onsuccess = () => {
+                console.log("Budget sauvegardé en BDD : ", newValue);
+                
+                // ACTION IMMÉDIATE : Mettre à jour l'interface SANS recharger la page
+                updateBudgetDisplayUI(newValue);
+                
+                // Reset du champ input
+                budgetInput.value = '';
+            };
+
+            putRequest.onerror = () => {
+                console.error("Erreur écriture BDD");
+                alert("Erreur lors de la sauvegarde du budget.");
+            };
+        });
+
+        // 3. Fonction de chargement initial (au démarrage de l'app)
+        function loadBudget() {
+            if (!db) return;
+            const transaction = db.transaction([SETTINGS_STORE], 'readonly');
+            const store = transaction.objectStore(SETTINGS_STORE);
+            const getRequest = store.get('budgetMax');
+
+            getRequest.onsuccess = () => {
+                if (getRequest.result) {
+                    const storedValue = getRequest.result.value;
+                    // On utilise la fonction d'affichage pour être cohérent
+                    updateBudgetDisplayUI(storedValue);
+                } else {
+                    // Valeur par défaut si rien n'est trouvé
+                    updateBudgetDisplayUI(0);
+                }
+            };
+        }
+
+        // ==========================================================
+        // FIN CORRECTION BUDGET
+        // ==========================================================
+
+        // --- GESTION DES DÉPENSES ---
+        expenseForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('amount').value);
+            const category = document.getElementById('category').value;
+            const date = document.getElementById('date').value;
+
+            if (isNaN(amount) || amount <= 0) {
+                alert("Le montant doit être supérieur à 0");
+                return;
+            }
+
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            
+            const newExpense = {
+                amount: amount,
+                category: category,
+                date: date,
+                timestamp: new Date().getTime()
+            };
+
+            store.add(newExpense).onsuccess = () => {
+                expenseForm.reset();
+                document.getElementById('date').valueAsDate = new Date();
+                loadExpenses();
+            };
+        });
+
+        function loadExpenses() {
+            if (!db) return;
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.openCursor(null, 'prev');
+
+            const expenses = [];
+            expenseList.innerHTML = '';
+
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) {
+                    expenses.push(cursor.value);
+                    
+                    const li = document.createElement('li');
+                    li.className = 'expense-item';
+                    li.innerHTML = `
+                        <div class="expense-info">
+                            <span>${cursor.value.category}</span>
+                            <span class="expense-cat">${cursor.value.date}</span>
+                        </div>
+                        <div style="display:flex; align-items:center;">
+                            <span class="expense-amount">-${cursor.value.amount.toFixed(2)} €</span>
+                            <button class="btn-delete" onclick="deleteExpense(${cursor.value.id})">&times;</button>
+                        </div>
+                    `;
+                    expenseList.appendChild(li);
+                    cursor.continue();
+                } else {
+                    updateChart(expenses);
+                    updateTotalAlert(expenses);
+                    updateSummaryText(expenses);
+                }
+            };
+        }
+
+        window.deleteExpense = (id) => {
+            if(!confirm("Supprimer cette dépense ?")) return;
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            store.delete(id);
+            transaction.oncomplete = () => loadExpenses();
+        };
+
+        // --- GRAPHIQUE & RÉSUMÉ ---
+        function updateChart(expenses) {
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+            const categories = {};
+            
+            expenses.forEach(exp => {
+                categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
+            });
+
+            const labels = Object.keys(categories);
+            const data = Object.values(categories);
+
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#e0e0e0' : '#333';
+
+            if (chartInstance) chartInstance.destroy();
+
+            if (labels.length === 0) {
+                // Pas de données, on ne dessine rien ou un graphique vide
+                return; 
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#3498db', '#e74c3c', '#f1c40f', '#2ecc71', '#9b59b6', '#95a5a6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor } }
+                    }
+                }
+            });
+        }
+
+        function updateTotalAlert(expenses = null) {
+            // Si on n'a pas la liste, on la récupère asynchronously pour recalculer
+            if (!expenses && db) {
+                const tx = db.transaction([STORE_NAME], 'readonly');
+                const req = tx.objectStore(STORE_NAME).getAll();
+                req.onsuccess = () => updateTotalAlert(req.result);
+                return;
+            }
+
+            if (!expenses) expenses = [];
+
+            const total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            // On lit la valeur ACTUELLE affichée (qui vient d'être mise à jour par updateBudgetDisplayUI)
+            const budgetMax = parseFloat(displayBudgetSpan.textContent) || 0;
+            
+            let htmlContent = `Budget actuel : <strong>${budgetMax.toFixed(2)} €</strong><br>Dépensé : <strong>${total.toFixed(2)} €</strong>`;
+
+            if (budgetMax > 0) {
+                if (total > budgetMax) {
+                    htmlContent += `<div class="alert" style="display:block">⚠️ Dépassement de ${(total - budgetMax).toFixed(2)} € !</div>`;
+                    budgetStatusDiv.style.color = 'var(--danger-color)';
+                } else {
+                    const remaining = budgetMax - total;
+                    htmlContent += `<div style="color:var(--success-color); margin-top:5px; font-weight:bold">Reste : ${remaining.toFixed(2)} €</div>`;
+                    budgetStatusDiv.style.color = 'var(--text-color)';
+                }
+            } else {
+                budgetStatusDiv.style.color = 'var(--text-color)';
+            }
+            
+            // On réinjecte le HTML tout en gardant le span à jour (déjà fait via textContent plus haut, mais on réécrit le conteneur)
+            // Attention : updateBudgetDisplayUI appelle ceci, donc on évite la boucle infinie en ne touchant pas au span ici si possible
+            // Mais comme on réécrit innerHTML, on doit s'assurer que le span est bien reconstruit ou mis à jour après.
+            // Simplification : on met à jour innerHTML puis on force la valeur du span à nouveau pour être sûr.
+            budgetStatusDiv.innerHTML = htmlContent;
+            
+            // Recréer le span si nécessaire (car innerHTML a tout écrasé)
+            if (!document.getElementById('displayBudget')) {
+                 // Cas rare où la structure change, mais ici on réécrit juste le contenu
+                 // La structure originale était : Budget actuel : <span id="displayBudget">X</span> €
+                 // Notre htmlContent ci-dessus a changé la structure. Adaptons pour garder la référence.
+                 // Pour faire simple et robuste : on garde le span outside ou on le recrée.
+                 // Correction robuste :
+                 const val = budgetMax.toFixed(2);
+                 budgetStatusDiv.innerHTML = `Budget actuel : <span id="displayBudget">${val}</span> €<br>Dépensé : <strong>${total.toFixed(2)} €</strong>`;
+                 
+                 if (budgetMax > 0 && total > budgetMax) {
+                     budgetStatusDiv.innerHTML += `<div class="alert" style="display:block">⚠️ Dépassement de ${(total - budgetMax).toFixed(2)} € !</div>`;
+                     budgetStatusDiv.style.color = 'var(--danger-color)';
+                 } else if (budgetMax > 0) {
+                     budgetStatusDiv.innerHTML += `<div style="color:var(--success-color); margin-top:5px; font-weight:bold">Reste : ${(budgetMax - total).toFixed(2)} €</div>`;
+                     budgetStatusDiv.style.color = 'var(--text-color)';
+                 }
+
+                 // Mettre à jour la référence globale car l'élément a été recréé dans le innerHTML
+                 window.displayBudgetSpan = document.getElementById('displayBudget');
+            }
+        }
+
+        function updateSummaryText(expenses) {
+            if (expenses.length === 0) {
+                summaryText.innerHTML = "<em>Aucune dépense enregistrée ce mois-ci.</em>";
+                return;
+            }
+            const categories = {};
+            let total = 0;
+            expenses.forEach(exp => {
+                categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
+                total += exp.amount;
+            });
+
+            let html = `<strong>Total : ${total.toFixed(2)} €</strong><br><br>`;
+            for (const [cat, amount] of Object.entries(categories)) {
+                const percent = ((amount / total) * 100).toFixed(0);
+                html += `${cat} : ${amount.toFixed(2)} € (${percent}%)<br>`;
+            }
+            summaryText.innerHTML = html;
+        }
+
+        // --- NAVIGATION ONGLETS ---
+        window.openTab = (tabName) => {
+            const contents = document.getElementsByClassName('tab-content');
+            for (let c of contents) c.classList.remove('active');
+            
+            const buttons = document.getElementsByClassName('tab-btn');
+            for (let b of buttons) b.classList.remove('active');
+
+            document.getElementById(tabName).classList.add('active');
+            
+            const activeBtn = Array.from(buttons).find(b => b.getAttribute('onclick').includes(tabName));
+            if (activeBtn) activeBtn.classList.add('active');
+
+            if (tabName === 'analysis') {
+                loadExpenses(); 
+            }
+        };
+
+        // --- SAUVEGARDE / RESTAURATION ---
+        btnExport.addEventListener('click', () => {
+            if (!db) return;
+            const tx = db.transaction([STORE_NAME, SETTINGS_STORE], 'readonly');
+            const expStore = tx.objectStore(STORE_NAME);
+            const setStore = tx.objectStore(SETTINGS_STORE);
+
+            const allExpenses = [];
+            let settingsData = {};
+
+            const expReq = expStore.openCursor();
+            expReq.onsuccess = (e) => {
+                const cursor = e.target.result;
+                if (cursor) {
+                    allExpenses.push(cursor.value);
+                    cursor.continue();
+                } else {
+                    const setReq = setStore.get('budgetMax');
+                    setReq.onsuccess = (ev) => {
+                        if (ev.target.result) settingsData.budgetMax = ev.target.result.value;
+                        
+                        const backup = {
+                            version: 1,
+                            date: new Date().toISOString(),
+                            expenses: allExpenses,
+                            settings: settingsData
+                        };
+                        
+                        const blob = new Blob([JSON.stringify(backup, null, 2)], {type: 'application/json'});
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `sauvegarde_budget_${new Date().toISOString().slice(0,10)}.json`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        showMessage("Sauvegarde téléchargée !", "success");
+                    };
+                }
+            };
+        });
+
+        btnImportTrigger.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                try {
+                    const data = JSON.parse(evt.target.result);
+                    if (!data.expenses || !data.settings) throw new Error("Format invalide");
+                    
+                    const tx = db.transaction([STORE_NAME, SETTINGS_STORE], 'readwrite');
+                    tx.objectStore(STORE_NAME).clear();
+                    tx.objectStore(SETTINGS_STORE).clear();
+                    
+                    data.expenses.forEach(exp => tx.objectStore(STORE_NAME).add(exp));
+                    if (data.settings.budgetMax !== undefined) {
+                        tx.objectStore(SETTINGS_STORE).put({key: 'budgetMax', value: data.settings.budgetMax});
+                    }
+
+                    tx.oncomplete = () => {
+                        showMessage("Restauration réussie !", "success");
+                        loadBudget();
+                        loadExpenses();
+                    };
+                } catch (err) {
+                    showMessage("Erreur: Fichier invalide", "error");
+                }
+            };
+            reader.readAsText(file);
+            fileInput.value = '';
+        });
+
+        function showMessage(msg, type) {
+            backupMessage.textContent = msg;
+            backupMessage.className = `message-box ${type}`;
+            setTimeout(() => backupMessage.className = 'message-box', 3000);
+        }
+
+        // --- GESTION DU THÈME ---
+        function applyTheme(theme) {
+            if (theme === 'system') {
+                const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.setAttribute('data-theme', sysDark ? 'dark' : 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+            localStorage.setItem('budgetTheme', theme);
+            if (chartInstance) {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                chartInstance.options.plugins.legend.labels.color = isDark ? '#e0e0e0' : '#333';
+                chartInstance.update();
+            }
+        }
+
+        const savedTheme = localStorage.getItem('budgetTheme') || 'system';
+        themeSelect.value = savedTheme;
+        applyTheme(savedTheme);
+
+        themeSelect.addEventListener('change', (e) => applyTheme(e.target.value));
+
+        // --- PWA INSTALL ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(console.error);
+            });
+            
+            let deferredPrompt;
+            const installBtn = document.getElementById('btnInstall');
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installBtn.style.display = 'block';
+            });
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                    installBtn.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

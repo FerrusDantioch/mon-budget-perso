@@ -2,33 +2,34 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mon Budget Perso</title>
     
-    <!-- Meta pour PWA (fonctionne même en local pour l'affichage) -->
+    <!-- Métadonnées PWA -->
     <meta name="theme-color" content="#3498db">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Budget">
 
-    <!-- Intégration du CSS directement ici -->
+    <!-- Chart.js (Chargement unique, mis en cache par le SW si déployé en PWA) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        /* --- VARIABLES CSS (THÈMES) --- */
+        /* --- VARIABLES DE THÈME --- */
         :root {
             --bg-color: #f4f7f6;
-            --text-color: #333;
+            --text-color: #333333;
             --card-bg: #ffffff;
             --header-color: #2c3e50;
             --subtitle-color: #7f8c8d;
             --border-color: #ecf0f1;
-            --input-bg: #fff;
             --input-border: #bdc3c7;
+            --primary-color: #3498db;
+            --secondary-color: #95a5a6;
+            --success-color: #27ae60;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --primary: #3498db;
-            --secondary: #95a5a6;
-            --success: #27ae60;
-            --warning: #e67e22;
-            --danger: #e74c3c;
         }
 
         /* Thème Sombre */
@@ -38,28 +39,28 @@
             --card-bg: #2d2d2d;
             --header-color: #ecf0f1;
             --subtitle-color: #b0b0b0;
-            --border-color: #444;
-            --input-bg: #333;
-            --input-border: #555;
-            --shadow: 0 4px 6px rgba(0,0,0,0.3);
+            --border-color: #404040;
+            --input-border: #555555;
+            --shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
 
         /* --- RESET & BASE --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
-            padding: 10px;
-            transition: background 0.3s, color 0.3s;
-            padding-bottom: 80px; /* Espace pour la nav mobile si fixe */
+            padding: 15px;
+            transition: background-color 0.3s, color 0.3s;
+            padding-bottom: 80px; /* Espace pour le footer si nécessaire */
         }
 
         .container { max-width: 600px; margin: 0 auto; }
 
-        header { text-align: center; margin-bottom: 20px; padding-top: 10px; }
-        header h1 { color: var(--header-color); font-size: 1.8rem; }
+        header { text-align: center; margin-bottom: 20px; }
+        header h1 { color: var(--header-color); font-size: 1.8rem; margin-bottom: 5px; }
         .subtitle { color: var(--subtitle-color); font-size: 0.9rem; }
 
         /* --- CARTES --- */
@@ -69,7 +70,7 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: var(--shadow);
-            transition: background 0.3s;
+            transition: background-color 0.3s;
         }
         .card h2 {
             font-size: 1.2rem;
@@ -81,39 +82,42 @@
 
         /* --- FORMULAIRES --- */
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+        
         input[type="number"], input[type="date"], select {
             width: 100%;
             padding: 12px;
             border: 1px solid var(--input-border);
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 1rem;
-            background: var(--input-bg);
+            background-color: var(--card-bg);
             color: var(--text-color);
+            outline: none;
         }
+        input:focus, select:focus { border-color: var(--primary-color); }
 
         /* --- BOUTONS --- */
         .btn {
             display: inline-block;
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 1rem;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s, transform 0.1s;
             text-align: center;
             margin-bottom: 10px;
             color: white;
         }
         .btn:active { transform: scale(0.98); }
-        .btn-primary { background-color: var(--primary); }
-        .btn-secondary { background-color: var(--secondary); }
-        .btn-success { background-color: var(--success); }
-        .btn-warning { background-color: var(--warning); }
-        
-        /* Navigation Onglets */
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-secondary { background-color: var(--secondary-color); }
+        .btn-success { background-color: var(--success-color); }
+        .btn-warning { background-color: var(--warning-color); }
+
+        /* --- ONGLETS --- */
         .tabs {
             display: flex;
             justify-content: space-around;
@@ -121,618 +125,86 @@
             padding: 10px;
             border-radius: 50px;
             box-shadow: var(--shadow);
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 95%;
-            max-width: 500px;
-            z-index: 1000;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
         }
         .tab-btn {
             background: none;
             border: none;
-            color: var(--subtitle-color);
-            font-size: 0.9rem;
-            font-weight: bold;
             padding: 10px 15px;
-            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--subtitle-color);
             cursor: pointer;
-            flex: 1;
+            border-radius: 20px;
             transition: all 0.3s;
+            flex: 1;
+            text-align: center;
         }
         .tab-btn.active {
-            background-color: var(--primary);
+            background-color: var(--primary-color);
             color: white;
         }
-
-        /* Gestion des contenus d'onglets */
-        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- GRAPHIQUE & SAUVEGARDE --- */
-        .chart-section { width: 100%; overflow: hidden; }
+        /* --- GRAPHIQUE & STATUS --- */
         .chart-container {
             position: relative;
-            width: 100%;
             height: 300px;
+            width: 100%;
             display: flex;
             justify-content: center;
         }
-        #expenseChart { max-width: 100%; height: auto !important; }
+        #expenseChart { max-width: 100%; }
+        
+        .status-info {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            background: var(--border-color);
+            padding: 10px;
+            border-radius: 6px;
+            color: var(--text-color);
+        }
+        .alert {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
 
-        .backup-section { border: 1px solid var(--border-color); background-color: var(--card-bg); }
+        /* --- LISTE DÉPENSES --- */
+        .expense-list { list-style: none; }
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .expense-item:last-child { border-bottom: none; }
+        .expense-info { display: flex; flex-direction: column; }
+        .expense-cat { font-size: 0.8rem; color: var(--subtitle-color); }
+        .expense-amount { font-weight: bold; color: var(--danger-color); }
+        .btn-delete {
+            background: none; border: none; color: var(--danger-color);
+            cursor: pointer; font-size: 1.5rem; margin-left: 10px; padding: 0 5px;
+        }
+
+        /* --- SAUVEGARDE & MESSAGES --- */
+        .backup-section { border: 1px solid var(--border-color); background-color: rgba(0,0,0,0.02); }
         .backup-desc { font-size: 0.85rem; color: var(--subtitle-color); margin-bottom: 15px; text-align: center; }
         .backup-buttons { display: flex; flex-direction: column; gap: 10px; }
-        
         .message-box {
             margin-top: 10px; padding: 10px; border-radius: 6px;
             text-align: center; font-size: 0.9rem; display: none;
         }
-        .message-box.success { background-color: #d4edda; color: #155724; display: block; }
-        .message-box.error { background-color: #f8d7da; color: #721c24; display: block; }
-
-        .status-info {
-            margin-top: 10px; font-size: 0.9rem; color: var(--text-color);
-            background: var(--border-color); padding: 8px; border-radius: 4px;
-        }
-
-        /* Liste dépenses */
-        .expense-list { list-style: none; }
-        .expense-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 0; border-bottom: 1px solid var(--border-color);
-        }
-        .expense-item:last-child { border-bottom: none; }
-        .expense-info { display: flex; flex-direction: column; }
-        .expense-cat { font-size: 0.85rem; color: var(--subtitle-color); }
-        .expense-amount { font-weight: bold; color: var(--danger); }
-        .btn-delete {
-            background: none; border: none; color: var(--danger);
-            cursor: pointer; font-size: 1.2rem; margin-left: 10px;
-        }
-
-        /* Footer */
-        footer { text-align: center; font-size: 0.8rem; color: var(--subtitle-color); margin-top: 30px; padding-bottom: 20px; }
-        
-        /* Ajustement mobile spécifique */
-        @media (max-width: 480px) {
-            body { padding-bottom: 90px; }
-            header h1 { font-size: 1.5rem; }
-            .card { padding: 15px; }
-        }
-    </style>
-    
-    <!-- Chargement de Chart.js depuis le CDN (nécessaire internet la 1ère fois) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-
-    <div class="container">
-        <header>
-            <h1>💰 Mon Budget</h1>
-            <p class="subtitle">Gestion locale et sécurisée</p>
-        </header>
-
-        <!-- CONTENU DES ONGLETS -->
-        
-        <!-- ONGLET 1 : ACCUEIL -->
-        <div id="home" class="tab-content active">
-            <section class="card config-section">
-                <h2>⚙️ Configuration</h2>
-                <div class="form-group">
-                    <label for="budgetMax">Budget Mensuel Max (€) :</label>
-                    <input type="number" id="budgetMax" placeholder="Ex: 1500">
-                    <button id="btnSaveBudget" class="btn btn-secondary">Enregistrer le budget</button>
-                </div>
-                <div id="budgetStatus" class="status-info">
-                    Budget actuel : <span id="displayBudget">0</span> €
-                </div>
-            </section>
-
-            <section class="card">
-                <h2>➕ Ajouter une dépense</h2>
-                <form id="expenseForm">
-                    <div class="form-group">
-                        <label for="amount">Montant (€) :</label>
-                        <input type="number" id="amount" step="0.01" required placeholder="Ex: 50.00">
-                    </div>
-                    <div class="form-group">
-                        <label for="category">Catégorie :</label>
-                        <select id="category" required>
-                            <option value="Alimentation">Alimentation</option>
-                            <option value="Logement">Logement</option>
-                            <option value="Transport">Transport</option>
-                            <option value="Loisirs">Loisirs</option>
-                            <option value="Santé">Santé</option>
-                            <option value="Autre">Autre</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="date">Date :</label>
-                        <input type="date" id="date" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Ajouter la dépense</button>
-                </form>
-            </section>
-            
-            <section class="card">
-                <h2>📋 Dernières dépenses</h2>
-                <ul id="expenseList" class="expense-list">
-                    <!-- Les dépenses s'afficheront ici -->
-                </ul>
-            </section>
-        </div>
-
-        <!-- ONGLET 2 : ANALYSE -->
-        <div id="analysis" class="tab-content">
-            <section class="card chart-section">
-                <h2>📊 Répartition des dépenses</h2>
-                <div class="chart-container">
-                    <canvas id="expenseChart"></canvas>
-                </div>
-                <div id="summaryText" style="margin-top: 20px; font-size: 0.9rem; line-height: 1.5;">
-                    <!-- Résumé textuel généré par JS -->
-                </div>
-            </section>
-        </div>
-
-        <!-- ONGLET 3 : DONNÉES & PARAMÈTRES -->
-        <div id="data" class="tab-content">
-            <section class="card backup-section">
-                <h2>💾 Sauvegarde & Restauration</h2>
-                <p class="backup-desc">Protégez vos données en les exportant sur votre appareil.</p>
-                <div class="backup-buttons">
-                    <button id="btnExport" class="btn btn-success">💾 Sauvegarder mes données</button>
-                    <button id="btnImportTrigger" class="btn btn-warning">📂 Restaurer une sauvegarde</button>
-                    <input type="file" id="fileInput" accept=".json" style="display: none;">
-                </div>
-                <div id="backupMessage" class="message-box"></div>
-            </section>
-
-            <section class="card settings-section">
-                <h2>🎨 Apparence</h2>
-                <div class="form-group">
-                    <label for="themeSelect">Choisir le thème :</label>
-                    <select id="themeSelect" class="btn btn-secondary" style="text-align: left;">
-                        <option value="system">🖥️ Comme le système</option>
-                        <option value="light">☀️ Mode Clair</option>
-                        <option value="dark">🌙 Mode Sombre</option>
-                    </select>
-                </div>
-            </section>
-
-            <section class="card pwa-section">
-                <h2>📲 Installation</h2>
-                <p class="backup-desc">Pour une expérience optimale, utilisez le menu de votre navigateur :</p>
-                <p id="installHint" style="font-size: 0.8rem; color: var(--subtitle-color); text-align: center;">
-                    <strong>Chrome:</strong> Menu (⋮) > "Installer l'appli"<br>
-                    <strong>Safari (iOS):</strong> Partager > "Sur l'écran d'accueil"
-                </p>
-            </section>
-
-            <footer>
-                <p>Données stockées localement dans votre navigateur.<br>Version Mobile Unifiée</p>
-            </footer>
-        </div>
-
-        <!-- NAVIGATION BAS DE PAGE -->
-        <nav class="tabs">
-            <button class="tab-btn active" onclick="openTab('home')">🏠 Accueil</button>
-            <button class="tab-btn" onclick="openTab('analysis')">📊 Analyse</button>
-            <button class="tab-btn" onclick="openTab('data')">💾 Données</button>
-        </nav>
-    </div>
-
-    <!-- Intégration du JavaScript directement ici -->
-    <script>
-        // --- GESTION DES ONGLETS ---
-        function openTab(tabName) {
-            // Cacher tous les contenus
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.classList.remove('active'));
-            
-            // Désactiver tous les boutons
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // Activer l'onglet demandé
-            document.getElementById(tabName).classList.add('active');
-            
-            // Trouver le bouton correspondant et l'activer
-            const activeBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(tabName));
-            if(activeBtn) activeBtn.classList.add('active');
-
-            // Si on va sur l'onglet Analyse, on met à jour le graphique
-            if(tabName === 'analysis') {
-                loadExpenses(); 
-            }
-        }
-
-        // --- VARIABLES GLOBALES ---
-        let db;
-        let chartInstance = null;
-        const DB_NAME = 'BudgetAppDB';
-        const DB_VERSION = 1;
-        const STORE_NAME = 'expenses';
-        const SETTINGS_STORE = 'settings';
-
-        // Éléments DOM
-        const expenseForm = document.getElementById('expenseForm');
-        const expenseList = document.getElementById('expenseList');
-        const budgetInput = document.getElementById('budgetMax');
-        const btnSaveBudget = document.getElementById('btnSaveBudget');
-        const displayBudget = document.getElementById('displayBudget');
-        const budgetStatusDiv = document.getElementById('budgetStatus');
-        const backupMessage = document.getElementById('backupMessage');
-        const btnExport = document.getElementById('btnExport');
-        const btnImportTrigger = document.getElementById('btnImportTrigger');
-        const fileInput = document.getElementById('fileInput');
-        const themeSelect = document.getElementById('themeSelect');
-
-        // Initialisation date
-        document.getElementById('date').valueAsDate = new Date();
-
-        // --- INITIALISATION INDEXEDDB ---
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-        request.onupgradeneeded = (event) => {
-            db = event.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-            }
-            if (!db.objectStoreNames.contains(SETTINGS_STORE)) {
-                const settingsStore = db.createObjectStore(SETTINGS_STORE, { keyPath: 'key' });
-                settingsStore.put({ key: 'budgetMax', value: 0 });
-                settingsStore.put({ key: 'theme', value: 'system' });
-            }
-        };
-
-        request.onsuccess = (event) => {
-            db = event.target.result;
-            console.log("DB Ouverte");
-            loadTheme();
-            loadBudget();
-            // On charge les dépenses pour l'onglet accueil
-            const transaction = db.transaction([STORE_NAME], 'readonly');
-            const store = transaction.objectStore(STORE_NAME);
-            const req = store.openCursor(null, 'prev');
-            req.onsuccess = (e) => {
-                const cursor = e.target.result;
-                if(cursor) {
-                    // Juste pour s'assurer que la DB est prête, l'affichage complet se fait via loadExpenses
-                }
-            };
-        };
-
-        request.onerror = (event) => console.error("Erreur DB:", event.target.errorCode);
-
-        // --- GESTION DU THÈME ---
-        themeSelect.addEventListener('change', (e) => {
-            const theme = e.target.value;
-            applyTheme(theme);
-            saveThemeSetting(theme);
-        });
-
-        function applyTheme(theme) {
-            if (theme === 'system') {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                } else {
-                    document.documentElement.removeAttribute('data-theme');
-                }
-            } else if (theme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            } else {
-                document.documentElement.removeAttribute('data-theme');
-            }
-        }
-
-        function loadTheme() {
-            const transaction = db.transaction([SETTINGS_STORE], 'readonly');
-            const store = transaction.objectStore(SETTINGS_STORE);
-            const req = store.get('theme');
-            req.onsuccess = () => {
-                const savedTheme = req.result ? req.result.value : 'system';
-                themeSelect.value = savedTheme;
-                applyTheme(savedTheme);
-            };
-        }
-
-        function saveThemeSetting(theme) {
-            const transaction = db.transaction([SETTINGS_STORE], 'readwrite');
-            const store = transaction.objectStore(SETTINGS_STORE);
-            store.put({ key: 'theme', value: theme });
-        }
-
-        // --- GESTION DU BUDGET ---
-        btnSaveBudget.addEventListener('click', () => {
-            const value = parseFloat(budgetInput.value);
-            if (isNaN(value) || value < 0) {
-                alert("Veuillez entrer un montant valide.");
-                return;
-            }
-            const transaction = db.transaction([SETTINGS_STORE], 'readwrite');
-            const store = transaction.objectStore(SETTINGS_STORE);
-            store.put({ key: 'budgetMax', value: value });
-            
-            transaction.oncomplete = () => {
-                displayBudget.textContent = value.toFixed(2);
-                budgetInput.value = '';
-                updateAlert();
-                showMessageInternal("Budget enregistré !");
-            };
-        });
-
-        function loadBudget() {
-            if (!db) return;
-            const transaction = db.transaction([SETTINGS_STORE], 'readonly');
-            const store = transaction.objectStore(SETTINGS_STORE);
-            const req = store.get('budgetMax');
-            req.onsuccess = () => {
-                if (req.result) {
-                    displayBudget.textContent = req.result.value.toFixed(2);
-                    updateAlert();
-                }
-            };
-        }
-
-        function showMessageInternal(text) {
-            const original = budgetStatusDiv.innerHTML;
-            budgetStatusDiv.innerHTML += `<br><small style="color:green">${text}</small>`;
-            setTimeout(() => budgetStatusDiv.innerHTML = original, 2000);
-        }
-
-        // --- AJOUT DÉPENSE ---
-        expenseForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const amount = parseFloat(document.getElementById('amount').value);
-            const category = document.getElementById('category').value;
-            const date = document.getElementById('date').value;
-
-            if (isNaN(amount) || amount <= 0) {
-                alert("Le montant doit être supérieur à 0");
-                return;
-            }
-
-            const transaction = db.transaction([STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(STORE_NAME);
-            store.add({
-                amount: amount,
-                category: category,
-                date: date,
-                timestamp: new Date().getTime()
-            });
-
-            transaction.oncomplete = () => {
-                expenseForm.reset();
-                document.getElementById('date').valueAsDate = new Date();
-                loadExpenses();
-            };
-        });
-
-        // --- AFFICHAGE LISTE & GRAPHIQUE ---
-        function loadExpenses() {
-            if (!db) return;
-            const transaction = db.transaction([STORE_NAME], 'readonly');
-            const store = transaction.objectStore(STORE_NAME);
-            const request = store.openCursor(null, 'prev');
-            const expenses = [];
-            expenseList.innerHTML = '';
-
-            request.onsuccess = (event) => {
-                const cursor = event.target.result;
-                if (cursor) {
-                    expenses.push(cursor.value);
-                    const li = document.createElement('li');
-                    li.className = 'expense-item';
-                    li.innerHTML = `
-                        <div class="expense-info">
-                            <span>${cursor.value.category}</span>
-                            <span class="expense-cat">${cursor.value.date}</span>
-                        </div>
-                        <div style="display:flex; align-items:center;">
-                            <span class="expense-amount">-${cursor.value.amount.toFixed(2)} €</span>
-                            <button class="btn-delete" onclick="deleteExpense(${cursor.value.id})">&times;</button>
-                        </div>
-                    `;
-                    expenseList.appendChild(li);
-                    cursor.continue();
-                } else {
-                    updateChart(expenses);
-                    updateTotalAlert(expenses);
-                    generateSummary(expenses);
-                }
-            };
-        }
-
-        window.deleteExpense = (id) => {
-            if(!confirm("Supprimer cette dépense ?")) return;
-            const transaction = db.transaction([STORE_NAME], 'readwrite');
-            transaction.objectStore(STORE_NAME).delete(id);
-            transaction.oncomplete = () => loadExpenses();
-        };
-
-        function updateChart(expenses) {
-            const ctx = document.getElementById('expenseChart').getContext('2d');
-            const categories = {};
-            expenses.forEach(exp => {
-                categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
-            });
-
-            if (chartInstance) chartInstance.destroy();
-
-            chartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(categories),
-                    datasets: [{
-                        data: Object.values(categories),
-                        backgroundColor: ['#3498db', '#e74c3c', '#f1c40f', '#2ecc71', '#9b59b6', '#95a5a6'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
-                }
-            });
-        }
-
-        function generateSummary(expenses) {
-            const categories = {};
-            let total = 0;
-            expenses.forEach(exp => {
-                categories[exp.category] = (categories[exp.category] || 0) + exp.amount;
-                total += exp.amount;
-            });
-            
-            let html = `<strong>Total dépensé : ${total.toFixed(2)} €</strong><br><br>`;
-            for (const [cat, amount] of Object.entries(categories)) {
-                html += `${cat}: ${amount.toFixed(2)} €<br>`;
-            }
-            document.getElementById('summaryText').innerHTML = html;
-        }
-
-        function updateTotalAlert(expenses) {
-            const total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-            const budgetMax = parseFloat(displayBudget.textContent);
-            let htmlContent = `Budget actuel : <span id="displayBudget">${budgetMax}</span> € <br> Total dépensé : <strong>${total.toFixed(2)} €</strong>`;
-
-            if (budgetMax > 0 && total > budgetMax) {
-                htmlContent += `<div style="color:#c0392b; margin-top:5px; font-weight:bold">⚠️ Dépassement de ${(total - budgetMax).toFixed(2)} € !</div>`;
-            } else if (budgetMax > 0) {
-                htmlContent += `<div style="color:green; margin-top:5px">Il vous reste ${budgetMax - total.toFixed(2)} €</div>`;
-            }
-            // Mise à jour simple sans réécraser tout le HTML si possible, mais ici on refresh la zone
-            // Pour éviter conflit avec loadBudget, on vérifie si l'élément existe déjà
-            const currentBudgetDisplay = document.getElementById('displayBudget');
-            if(currentBudgetDisplay) {
-                 // Déjà géré par la structure
-            }
-            // Note: Cette fonction est appelée après chargement, elle complète l'info
-            const statusDiv = document.getElementById('budgetStatus');
-            // On garde le budget affiché et on ajoute le total
-            statusDiv.innerHTML = htmlContent; 
-        }
-        
-        function updateAlert() {
-             // Recharge les dépenses pour mettre à jour les totaux avec le nouveau budget
-             loadExpenses();
-        }
-
-        // --- SAUVEGARDE & RESTAURATION ---
-        btnExport.addEventListener('click', () => {
-            if (!db) return;
-            const transaction = db.transaction([STORE_NAME, SETTINGS_STORE], 'readonly');
-            const expenseStore = transaction.objectStore(STORE_NAME);
-            const settingsStore = transaction.objectStore(SETTINGS_STORE);
-            
-            const allExpenses = [];
-            let settingsData = {};
-
-            const expReq = expenseStore.openCursor();
-            expReq.onsuccess = (e) => {
-                const cursor = e.target.result;
-                if (cursor) {
-                    allExpenses.push(cursor.value);
-                    cursor.continue();
-                } else {
-                    // Une fois les dépenses récupérées, on prend les settings
-                    const setReqB = settingsStore.get('budgetMax');
-                    const setReqT = settingsStore.get('theme');
-                    
-                    setReqB.onsuccess = (ev) => { if(ev.target.result) settingsData.budgetMax = ev.target.result.value; };
-                    setReqT.onsuccess = (ev) => { 
-                        if(ev.target.result) settingsData.theme = ev.target.result.value; 
-                        
-                        // Petit délai pour s'assurer que tout est là
-                        setTimeout(() => {
-                            const backupData = {
-                                version: 1,
-                                date: new Date().toISOString(),
-                                expenses: allExpenses,
-                                settings: settingsData
-                            };
-                            downloadJSON(backupData);
-                        }, 100);
-                    };
-                }
-            };
-        });
-
-        function downloadJSON(data) {
-            const jsonString = JSON.stringify(data, null, 2);
-            const blob = new Blob([jsonString], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `sauvegarde_budget_${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showMessage("Sauvegarde téléchargée !", "success");
-        }
-
-        btnImportTrigger.addEventListener('click', () => fileInput.click());
-        
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                try {
-                    const data = JSON.parse(evt.target.result);
-                    if (!data.expenses) throw new Error("Fichier invalide");
-                    restoreData(data);
-                } catch (err) {
-                    showMessage("Erreur: Fichier invalide", "error");
-                }
-            };
-            reader.readAsText(file);
-            fileInput.value = '';
-        });
-
-        function restoreData(data) {
-            if (!db) return;
-            const transaction = db.transaction([STORE_NAME, SETTINGS_STORE], 'readwrite');
-            const expenseStore = transaction.objectStore(STORE_NAME);
-            const settingsStore = transaction.objectStore(SETTINGS_STORE);
-
-            expenseStore.clear();
-            settingsStore.clear();
-
-            data.expenses.forEach(exp => {
-                const { id, ...newExp } = exp;
-                expenseStore.add(newExp);
-            });
-
-            if (data.settings.budgetMax !== undefined) {
-                settingsStore.put({ key: 'budgetMax', value: data.settings.budgetMax });
-            }
-            if (data.settings.theme !== undefined) {
-                settingsStore.put({ key: 'theme', value: data.settings.theme });
-            }
-
-            transaction.oncomplete = () => {
-                showMessage("Restauration réussie !", "success");
-                loadBudget();
-                loadTheme();
-                loadExpenses();
-            };
-        }
-
-        function showMessage(text, type) {
-            backupMessage.textContent = text;
-            backupMessage.className = `message-box ${type}`;
-            setTimeout(() => {
-                backupMessage.className = 'message-box';
-                backupMessage.textContent = '';
-            }, 3000);
-        }
-    </script>
-</body>
-</html>
+        .message-box.success { background-color: rgba(39, 174, 96, 0.2); color: var(--success-color); display: block; }
+        .message-box.error { background-color: rgba(231, 76,

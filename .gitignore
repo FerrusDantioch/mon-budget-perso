@@ -1,0 +1,14 @@
+# Dossiers generes automatiquement : ils ne doivent jamais etre envoyes sur GitHub.
+node_modules/
+dist/
+
+# Icones fabriquees par "npm run icones" (regenerables a tout moment).
+public/icones/
+
+# Fichiers temporaires des editeurs et systemes
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+public/ocr/

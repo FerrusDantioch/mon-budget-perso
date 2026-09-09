@@ -1,0 +1,853 @@
+/*
+ * STYLES DES ELEMENTS DE L'INTERFACE
+ * (en-tete, navigation, cartes, boutons, formulaires, barres de progression...)
+ *
+ * Regle suivie partout : toute zone sur laquelle on peut appuyer mesure au
+ * moins 44 x 44 pixels, la taille recommandee pour un doigt (WCAG 2.5.5).
+ */
+
+/* ==========================================================================
+   EN-TETE
+   ========================================================================== */
+.entete {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--fond-carte);
+  border-bottom: 1px solid var(--bordure);
+  padding: env(safe-area-inset-top) 0 0;
+}
+
+.entete-interieur {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.entete-titre {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entete-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* ==========================================================================
+   INDICATEUR EN LIGNE / HORS-LIGNE
+   ========================================================================== */
+.indicateur-connexion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.indicateur-connexion.en-ligne {
+  background: var(--ok-fond);
+  color: var(--ok);
+  border-color: color-mix(in srgb, var(--ok) 30%, transparent);
+}
+.indicateur-connexion.hors-ligne {
+  background: var(--attention-fond);
+  color: var(--attention);
+  border-color: color-mix(in srgb, var(--attention) 35%, transparent);
+}
+.pastille {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+/* ==========================================================================
+   NAVIGATION PRINCIPALE
+   ========================================================================== */
+.navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: var(--fond-carte);
+  border-top: 1px solid var(--bordure);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.navigation-liste {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin-block: 0;
+}
+
+.navigation-liste li {
+  flex: 1;
+}
+
+.navigation-bouton {
+  width: 100%;
+  min-height: var(--hauteur-navigation);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: var(--texte-doux);
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 4px;
+}
+.navigation-bouton .icone {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+.navigation-bouton[aria-current='page'] {
+  color: var(--accent);
+}
+/* Repere visuel qui ne repose pas uniquement sur la couleur (WCAG 1.4.1). */
+.navigation-bouton[aria-current='page']::before {
+  content: '';
+  position: absolute;
+  margin-top: -0.75rem;
+  width: 26px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+@media (min-width: 760px) {
+  /* Sur ordinateur, la navigation se place sous l'en-tete, dans le flux
+     normal de la page (et non collee en bas comme sur telephone).
+     On ne la rend pas "collante" : deux elements colles l'un sous l'autre se
+     chevaucheraient, et il faudrait coder en dur la hauteur de l'en-tete. */
+  .navigation {
+    position: static;
+    bottom: auto;
+    border-top: none;
+    border-bottom: 1px solid var(--bordure);
+  }
+  .navigation-bouton {
+    flex-direction: row;
+    gap: 0.4rem;
+    min-height: 48px;
+    font-size: 0.85rem;
+  }
+  .navigation-bouton[aria-current='page']::before {
+    display: none;
+  }
+  .navigation-bouton[aria-current='page'] {
+    box-shadow: inset 0 -3px 0 var(--accent);
+  }
+}
+
+/* ==========================================================================
+   CARTES
+   ========================================================================== */
+.carte {
+  background: var(--fond-carte);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  padding: 1rem;
+  box-shadow: var(--ombre-carte);
+}
+
+.carte-titre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.carte-titre h2,
+.carte-titre h3 {
+  margin: 0;
+}
+
+/* Grand chiffre du tableau de bord */
+.montant-principal {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.montant-secondaire {
+  color: var(--texte-doux);
+  font-size: 0.9rem;
+}
+
+.grille-chiffres {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+.chiffre-cle {
+  background: var(--fond-doux);
+  border-radius: var(--rayon-petit);
+  padding: 0.7rem 0.8rem;
+}
+.chiffre-cle .etiquette {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--texte-doux);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.chiffre-cle .valeur {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.chiffre-cle .detail {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--texte-doux);
+}
+
+/* ==========================================================================
+   BARRES DE PROGRESSION DU BUDGET
+   ========================================================================== */
+.ligne-budget + .ligne-budget {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--bordure);
+}
+
+.ligne-budget-entete {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+.ligne-budget-nom {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.ligne-budget-nom .texte {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ligne-budget-montants {
+  margin-left: auto;
+  font-size: 0.88rem;
+  color: var(--texte-doux);
+  white-space: nowrap;
+}
+.ligne-budget-montants strong {
+  color: var(--texte);
+}
+
+.barre-progression {
+  height: 10px;
+  background: var(--fond-doux);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--bordure);
+}
+.barre-progression-remplissage {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.35s ease;
+  min-width: 3px;
+}
+
+/* Les quatre niveaux d'alerte. Chaque niveau est aussi ecrit en toutes
+   lettres a cote de la barre : la couleur n'est jamais la seule information. */
+.niveau-ok .barre-progression-remplissage { background: var(--ok); }
+.niveau-attention .barre-progression-remplissage { background: var(--attention); }
+.niveau-critique .barre-progression-remplissage { background: var(--critique); }
+.niveau-depasse .barre-progression-remplissage { background: var(--depasse); }
+.niveau-sans-plafond .barre-progression-remplissage { background: var(--bordure-forte); }
+
+.etiquette-niveau {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+}
+.niveau-ok .etiquette-niveau { background: var(--ok-fond); color: var(--ok); }
+.niveau-attention .etiquette-niveau { background: var(--attention-fond); color: var(--attention); }
+.niveau-critique .etiquette-niveau { background: var(--critique-fond); color: var(--critique); }
+.niveau-depasse .etiquette-niveau { background: var(--depasse-fond); color: var(--depasse); }
+.niveau-sans-plafond .etiquette-niveau { background: var(--fond-doux); color: var(--texte-doux); }
+
+.ligne-budget-pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--texte-doux);
+}
+
+/* ==========================================================================
+   BOUTONS
+   ========================================================================== */
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+  border-radius: var(--rayon-petit);
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--fond-doux);
+  color: var(--texte);
+  text-decoration: none;
+}
+.bouton:hover { background: var(--fond-survol); }
+.bouton:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.bouton-principal {
+  background: var(--accent);
+  color: #fff;
+}
+.bouton-principal:hover { background: var(--accent-fonce); }
+
+.bouton-discret {
+  background: transparent;
+  border-color: var(--bordure-forte);
+}
+.bouton-discret:hover { background: var(--fond-doux); }
+
+.bouton-danger {
+  background: var(--critique-fond);
+  color: var(--critique);
+  border-color: color-mix(in srgb, var(--critique) 35%, transparent);
+}
+
+.bouton-icone {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.4rem;
+  border-radius: var(--rayon-petit);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--texte);
+  font-size: 1.15rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.bouton-icone:hover { background: var(--fond-doux); }
+
+.rangee-boutons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.rangee-boutons .bouton { flex: 1 1 auto; }
+
+/* Bouton flottant "+" pour ajouter une depense */
+.bouton-flottant {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: calc(var(--hauteur-navigation) + env(safe-area-inset-bottom) + 1rem);
+  z-index: 25;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.9rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--ombre-flottante);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (min-width: 760px) {
+  .bouton-flottant { bottom: 1.5rem; }
+}
+
+/* ==========================================================================
+   SELECTEUR DE MOIS
+   ========================================================================== */
+.selecteur-mois {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--fond-carte);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  padding: 0.25rem;
+}
+.selecteur-mois-libelle {
+  flex: 1;
+  text-align: center;
+  font-weight: 650;
+  font-size: 0.98rem;
+  text-transform: capitalize;
+}
+
+/* ==========================================================================
+   FORMULAIRES
+   ========================================================================== */
+.champ {
+  display: block;
+  margin-bottom: 0.9rem;
+}
+.champ-etiquette {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 650;
+  margin-bottom: 0.3rem;
+}
+.champ-aide {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--texte-doux);
+  margin-top: 0.25rem;
+}
+.champ-erreur {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--critique);
+  margin-top: 0.25rem;
+}
+
+input[type='text'],
+input[type='date'],
+input[type='number'],
+input[type='password'],
+select,
+textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.55rem 0.7rem;
+  font-family: inherit;
+  /* 16px minimum : en dessous, iOS zoome automatiquement sur le champ. */
+  font-size: 16px;
+  color: var(--texte);
+  background: var(--fond-carte);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-petit);
+}
+textarea { min-height: 76px; resize: vertical; }
+
+input[aria-invalid='true'],
+select[aria-invalid='true'] {
+  border-color: var(--critique);
+  border-width: 2px;
+}
+
+.champ-montant {
+  position: relative;
+}
+.champ-montant input {
+  font-size: 1.25rem;
+  font-weight: 650;
+  padding-right: 2.2rem;
+}
+.champ-montant .devise {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--texte-doux);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* Choix de categorie sous forme de pastilles */
+.choix-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  border: none;
+  padding: 0;
+  margin: 0 0 0.9rem;
+}
+.choix-categories legend {
+  font-size: 0.85rem;
+  font-weight: 650;
+  padding: 0;
+  margin-bottom: 0.3rem;
+}
+.pastille-categorie {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 2px solid var(--bordure);
+  background: var(--fond-carte);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pastille-categorie input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.pastille-categorie.selectionnee {
+  border-color: var(--accent);
+  background: var(--accent-doux);
+}
+.pastille-categorie .point {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.ligne-champs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+@media (max-width: 420px) {
+  .ligne-champs { grid-template-columns: 1fr; }
+}
+
+/* Cases a cocher et interrupteurs */
+.champ-case {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  min-height: 44px;
+  cursor: pointer;
+}
+.champ-case input {
+  width: 22px;
+  height: 22px;
+  margin-top: 0.6rem;
+  flex: none;
+  accent-color: var(--accent);
+}
+
+/* ==========================================================================
+   LISTE DES DEPENSES
+   ========================================================================== */
+.liste-depenses {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.depense {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--bordure);
+}
+.depense:last-child { border-bottom: none; }
+
+.depense-pastille {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex: none;
+  color: #fff;
+}
+.depense-details {
+  flex: 1;
+  min-width: 0;
+}
+.depense-titre {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.depense-sous-titre {
+  font-size: 0.8rem;
+  color: var(--texte-doux);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.depense-montant {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.groupe-jour {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texte-doux);
+  margin: 1rem 0 0.2rem;
+}
+
+/* ==========================================================================
+   FENETRE MODALE
+   ========================================================================== */
+.fond-modale {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(9, 13, 20, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+@media (min-width: 620px) {
+  .fond-modale { align-items: center; padding: 1.5rem; }
+}
+
+.modale {
+  background: var(--fond-carte);
+  width: 100%;
+  max-width: 560px;
+  max-height: 92vh;
+  max-height: 92dvh;
+  overflow-y: auto;
+  border-radius: var(--rayon) var(--rayon) 0 0;
+  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+  box-shadow: var(--ombre-flottante);
+}
+@media (min-width: 620px) {
+  .modale { border-radius: var(--rayon); padding-bottom: 1rem; }
+}
+
+.modale-entete {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+.modale-entete h2 { margin: 0; flex: 1; }
+
+/* ==========================================================================
+   BANDEAUX D'INFORMATION
+   ========================================================================== */
+.bandeau {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--rayon-petit);
+  font-size: 0.9rem;
+  border: 1px solid transparent;
+}
+.bandeau-info {
+  background: var(--accent-doux);
+  color: var(--texte);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.bandeau-alerte {
+  background: var(--attention-fond);
+  color: var(--attention);
+  border-color: color-mix(in srgb, var(--attention) 35%, transparent);
+}
+.bandeau-erreur {
+  background: var(--critique-fond);
+  color: var(--critique);
+  border-color: color-mix(in srgb, var(--critique) 35%, transparent);
+}
+.bandeau .bouton { flex: none; min-height: 38px; padding: 0.35rem 0.75rem; }
+
+/* Message court apres une action (ajout, suppression...) */
+.message-confirmation {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--hauteur-navigation) + env(safe-area-inset-bottom) + 5rem);
+  z-index: 60;
+  background: var(--texte);
+  color: var(--fond-carte);
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  box-shadow: var(--ombre-flottante);
+  max-width: calc(100% - 2rem);
+  text-align: center;
+}
+
+/* ==========================================================================
+   GRAPHIQUE
+   ========================================================================== */
+.zone-graphique {
+  width: 100%;
+  height: 240px;
+}
+.legende-graphique {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: grid;
+  /* 210px : sur un ecran de telephone la legende passe sur une seule
+     colonne, ce qui evite de couper les noms de categories. */
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.3rem 0.8rem;
+}
+.legende-graphique li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.86rem;
+}
+.legende-graphique .point {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  flex: none;
+}
+.legende-graphique .nom {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.legende-graphique .valeur {
+  color: var(--texte-doux);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Infobulle du camembert */
+.infobulle-graphique {
+  background: var(--fond-carte);
+  border: 1px solid var(--bordure-forte);
+  border-radius: var(--rayon-petit);
+  padding: 0.5rem 0.7rem;
+  box-shadow: var(--ombre-carte);
+  font-size: 0.86rem;
+}
+.infobulle-graphique strong { display: block; }
+
+/* ==========================================================================
+   REGLAGES ET LISTES DE CATEGORIES
+   ========================================================================== */
+.liste-reglages {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.liste-reglages > li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--bordure);
+}
+.liste-reglages > li:last-child { border-bottom: none; }
+.liste-reglages .principal { flex: 1; min-width: 0; }
+.liste-reglages .principal .titre { font-weight: 600; }
+.liste-reglages .principal .detail { font-size: 0.82rem; color: var(--texte-doux); }
+
+.groupe-choix {
+  display: flex;
+  gap: 0.4rem;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+.groupe-choix label {
+  flex: 1;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bordure);
+  border-radius: var(--rayon-petit);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--fond-carte);
+}
+.groupe-choix label.selectionne {
+  border-color: var(--accent);
+  background: var(--accent-doux);
+}
+.groupe-choix input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* Choix de couleur et d'emoji dans le formulaire de categorie */
+.grille-couleurs,
+.grille-emojis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  border: none;
+  padding: 0;
+  margin: 0 0 0.9rem;
+}
+.grille-couleurs legend,
+.grille-emojis legend {
+  font-size: 0.85rem;
+  font-weight: 650;
+  padding: 0;
+  margin-bottom: 0.3rem;
+}
+.puce-couleur,
+.puce-emoji {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--rayon-petit);
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background: var(--fond-carte);
+  position: relative;
+}
+.puce-couleur.selectionnee,
+.puce-emoji.selectionnee {
+  border-color: var(--texte);
+  box-shadow: 0 0 0 2px var(--fond-carte) inset;
+}
+.puce-couleur input,
+.puce-emoji input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}

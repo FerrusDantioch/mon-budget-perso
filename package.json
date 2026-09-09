@@ -1,0 +1,34 @@
+{
+  "name": "budget-perso",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Gestion de budget personnel — 100% hors-ligne, aucune donnee envoyee sur Internet",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "icones": "node scripts/generer-icones.mjs",
+    "ocr": "node scripts/preparer-ocr.mjs",
+    "preparer": "npm run icones && npm run ocr"
+  },
+  "dependencies": {
+    "idb": "^8.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.13.3",
+    "tesseract.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.2.0",
+    "fake-indexeddb": "^6.0.0",
+    "jsdom": "^25.0.1",
+    "vite": "^7.3.6",
+    "vitest": "^3.2.7"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

@@ -1,0 +1,69 @@
+# Publication automatique sur GitHub Pages.
+# A chaque fois que vous envoyez du code sur la branche principale (git push),
+# GitHub fabrique l'application et la met en ligne tout seul.
+
+name: Deployer sur GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  # Permet aussi de relancer la publication a la main depuis l'onglet "Actions".
+  workflow_dispatch:
+
+# Autorisations minimales necessaires a la publication.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Si deux publications se lancent en meme temps, on garde la plus recente.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recuperer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Installer les librairies
+        run: npm ci
+
+      - name: Fabriquer les icones
+        run: npm run icones
+
+      - name: Preparer le moteur de reconnaissance de texte
+        # Copie Tesseract depuis node_modules et telecharge le dictionnaire
+        # francais. En cas d echec reseau, le script n interrompt pas la
+        # construction : le scanner proposera la saisie manuelle.
+        run: npm run ocr
+
+      - name: Lancer les tests automatises
+        run: npm test
+
+      - name: Construire l'application
+        run: npm run build
+
+      - name: Preparer l'envoi vers GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  publier:
+    needs: construire
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - name: Mettre en ligne
+        id: deploiement
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover : l'application occupe tout l'ecran, y compris sous
+         l'encoche des telephones recents. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="description" content="Gestion de budget personnel, 100% hors-ligne. Aucune donnee ne quitte votre appareil." />
+
+    <!-- Couleur de la barre systeme du telephone, adaptee au theme clair ou sombre. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f8fa" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#12151a" />
+
+    <!-- Permet l'installation sur l'ecran d'accueil (Android, Windows, macOS). -->
+    <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
+
+    <!-- iOS n'utilise pas le manifest pour l'icone : il faut cette balise dediee. -->
+    <link rel="apple-touch-icon" href="%BASE_URL%icones/icone-180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Budget" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="%BASE_URL%icones/icone-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="%BASE_URL%icones/icone-192.png" />
+
+    <title>Budget — mes depenses</title>
+  </head>
+  <body>
+    <!-- Lien invisible qui apparait au premier appui sur Tab : il permet aux
+         personnes naviguant au clavier de sauter directement au contenu. (WCAG 2.4.1) -->
+    <a class="lien-evitement" href="#contenu-principal">Aller au contenu principal</a>
+
+    <!-- React remplace le contenu de cette div des que l'application demarre.
+         Le texte ci-dessous s'affiche pendant le chargement (et si JavaScript echoue). -->
+    <div id="racine">
+      <div class="chargement-initial" role="status">
+        <p>Chargement de votre budget…</p>
+      </div>
+    </div>
+
+    <noscript>
+      <p style="padding: 1rem; font-family: system-ui, sans-serif">
+        Cette application a besoin de JavaScript pour fonctionner. Merci de
+        l'activer dans les reglages de votre navigateur.
+      </p>
+    </noscript>
+
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

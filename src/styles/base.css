@@ -1,0 +1,231 @@
+/*
+ * FEUILLE DE STYLE PRINCIPALE — couleurs, textes, mise en page generale
+ *
+ * Toutes les couleurs sont declarees une seule fois, sous forme de "variables
+ * CSS" (les lignes qui commencent par --). Le theme sombre se contente de
+ * redonner d'autres valeurs a ces memes variables : aucun autre style n'a
+ * besoin d'etre duplique.
+ */
+
+/* ==========================================================================
+   1. PALETTE — THEME CLAIR (valeurs par defaut)
+   ========================================================================== */
+:root {
+  --fond: #f7f8fa;
+  --fond-carte: #ffffff;
+  --fond-doux: #eef1f6;
+  --fond-survol: #e8edf5;
+
+  --texte: #14181f;
+  --texte-doux: #55606f;
+  --texte-inverse: #ffffff;
+
+  --bordure: #dde2ea;
+  --bordure-forte: #c3ccd9;
+
+  --accent: #2563eb;
+  --accent-fonce: #1d4ed8;
+  --accent-doux: #e6edfd;
+
+  /* Couleurs des niveaux d'alerte du budget.
+     Elles ont toutes un contraste >= 4,5:1 avec le fond des cartes (WCAG AA). */
+  --ok: #15803d;
+  --ok-fond: #dcfce7;
+  --attention: #b45309;
+  --attention-fond: #fef3c7;
+  --critique: #c2261c;
+  --critique-fond: #fee2e2;
+  --depasse: #991b1b;
+  --depasse-fond: #fecaca;
+
+  --ombre-carte: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --ombre-flottante: 0 6px 20px rgba(16, 24, 40, 0.18);
+
+  --rayon: 14px;
+  --rayon-petit: 9px;
+
+  /* Hauteur de la barre de navigation du bas, reutilisee pour les marges. */
+  --hauteur-navigation: 60px;
+
+  color-scheme: light;
+}
+
+/* ==========================================================================
+   2. PALETTE — THEME SOMBRE
+   ========================================================================== */
+:root[data-theme='sombre'] {
+  --fond: #12151a;
+  --fond-carte: #1b2028;
+  --fond-doux: #232935;
+  --fond-survol: #2b3240;
+
+  --texte: #e9edf3;
+  --texte-doux: #a2adbc;
+  --texte-inverse: #0b0e13;
+
+  --bordure: #2e3542;
+  --bordure-forte: #414a5a;
+
+  --accent: #6d9bff;
+  --accent-fonce: #8fb3ff;
+  --accent-doux: #1e2a44;
+
+  --ok: #56d489;
+  --ok-fond: #12321f;
+  --attention: #fcbf49;
+  --attention-fond: #3a2a0c;
+  --critique: #ff8a80;
+  --critique-fond: #3d1715;
+  --depasse: #ff9a91;
+  --depasse-fond: #4a1512;
+
+  --ombre-carte: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ombre-flottante: 0 6px 22px rgba(0, 0, 0, 0.55);
+
+  color-scheme: dark;
+}
+
+/* ==========================================================================
+   3. REGLAGES DE BASE
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Un element marque "hidden" doit rester cache meme si une regle plus loin
+   lui donne un display (flex, grid...). */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  /* Empeche les navigateurs mobiles d'agrandir le texte en mode paysage. */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--texte);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  /* Evite le "rebond" horizontal quand un tableau depasse. */
+  overflow-x: hidden;
+}
+
+h1, h2, h3 {
+  margin: 0 0 0.4em;
+  line-height: 1.25;
+  font-weight: 650;
+}
+
+h1 { font-size: 1.35rem; }
+h2 { font-size: 1.1rem; }
+h3 { font-size: 0.98rem; }
+
+p { margin: 0 0 0.8em; }
+
+/* Toute personne naviguant au clavier doit voir ou elle se trouve (WCAG 2.4.7). */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Les animations sont desactivees pour les personnes qui le demandent
+   dans les reglages de leur systeme (WCAG 2.3.3). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ==========================================================================
+   4. UTILITAIRES D'ACCESSIBILITE
+   ========================================================================== */
+
+/* Texte lu par les lecteurs d'ecran mais invisible a l'ecran. */
+.sr-seulement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Lien "Aller au contenu principal" : cache jusqu'au premier appui sur Tab. */
+.lien-evitement {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.7rem 1rem;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 0 0 var(--rayon-petit) 0;
+  text-decoration: none;
+}
+.lien-evitement:focus {
+  left: 0;
+}
+
+/* Message affiche pendant le chargement initial (dans index.html). */
+.chargement-initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--texte-doux);
+}
+
+/* ==========================================================================
+   5. STRUCTURE DE LA PAGE
+   ========================================================================== */
+.appli {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  /* 100dvh tient compte de la barre d'adresse mobile qui se retracte. */
+  min-height: 100dvh;
+}
+
+.contenu {
+  flex: 1;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem 1rem 1.5rem;
+  /* De la place pour la barre de navigation fixee en bas + zone tactile iOS. */
+  padding-bottom: calc(var(--hauteur-navigation) + env(safe-area-inset-bottom) + 1.5rem);
+}
+
+@media (min-width: 760px) {
+  /* Sur grand ecran, la navigation passe en haut : plus besoin de marge basse. */
+  .contenu {
+    padding-bottom: 2.5rem;
+  }
+}
+
+/* Espacement vertical regulier entre les blocs d'un ecran. */
+.pile > * + * {
+  margin-top: 1rem;
+}
+.pile-serree > * + * {
+  margin-top: 0.6rem;
+}
+
+.centre-vide {
+  text-align: center;
+  color: var(--texte-doux);
+  padding: 2rem 1rem;
+}

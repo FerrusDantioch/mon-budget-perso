@@ -61,6 +61,12 @@ import { formaterDateCourte } from './utils/dates.js';
 export function App() {
   const { etat, erreurDemarrage } = useCoffre();
 
+  // Le service worker est enregistre des le tout premier affichage, quel que
+  // soit l etat du verrouillage. C est important : c est lui qui rend
+  // l application utilisable sans connexion, y compris son ecran de code.
+  // Le placer plus bas ne l aurait enregistre qu apres le deverrouillage.
+  const serviceWorker = useServiceWorker();
+
   if (erreurDemarrage) {
     return (
       <main className="contenu">
@@ -85,13 +91,13 @@ export function App() {
 
   return (
     <FournisseurBudget>
-      <ApplicationDeverrouillee />
+      <ApplicationDeverrouillee serviceWorker={serviceWorker} />
     </FournisseurBudget>
   );
 }
 
 /** L'application une fois le coffre ouvert. */
-function ApplicationDeverrouillee() {
+function ApplicationDeverrouillee({ serviceWorker }) {
   const {
     pret,
     erreur,
@@ -108,7 +114,7 @@ function ApplicationDeverrouillee() {
 
   const { verrouiller } = useCoffre();
   const { ecran, titre, estUnSousEcran, action, allerVers, retour, effacerAction } = useRouteur();
-  const { miseAJourDisponible, appliquerLaMiseAJour, installe } = useServiceWorker();
+  const { miseAJourDisponible, appliquerLaMiseAJour, installe } = serviceWorker;
 
   const [depenseEnEdition, definirDepenseEnEdition] = useState(null);
   const [depenseASupprimer, definirDepenseASupprimer] = useState(null);

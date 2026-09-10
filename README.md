@@ -430,3 +430,19 @@ GitHub Pages ne permet pas d'ajouter d'en-têtes HTTP personnalisés. La règle
 | 4 | Export/import chiffré, phrase BIP39, export CSV signalé non chiffré | ✅ |
 | 5 | Scanner de reçus, OCR local différé, correction obligatoire, historique | ✅ |
 | 6 | Badging API, raccourcis du manifest, limites du widget documentées | ✅ |
+
+---
+
+## Licence
+
+Distribué sous licence **[MIT](LICENSE)**.
+
+Vous pouvez utiliser, modifier et redistribuer ce code librement, y compris à
+des fins commerciales, à la seule condition de conserver la mention de
+copyright et le texte de la licence. Le logiciel est fourni « en l'état »,
+sans aucune garantie.
+
+Les bibliothèques tierces utilisées par ce projet (voir `package.json`)
+restent soumises à leurs propres licences.
+
+© 2026 FerrusDantioch

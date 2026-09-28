@@ -59,6 +59,19 @@ export function useServiceWorker() {
         console.warn('Mode hors-ligne indisponible :', probleme);
       });
 
+    // STOCKAGE PERSISTANT
+    // Par defaut, le navigateur peut effacer de lui-meme la copie hors-ligne
+    // (et les donnees du budget) s'il manque de place ou si l'application est
+    // peu utilisee : elle ne s'ouvrirait alors plus sans reseau. persist() lui
+    // demande de les garder. S'il refuse, rien ne change : l'application
+    // marche comme avant.
+    if (navigator.storage && navigator.storage.persist) {
+      navigator.storage
+        .persisted()
+        .then((dejaPersistant) => dejaPersistant || navigator.storage.persist())
+        .catch(() => {});
+    }
+
     // Quand la nouvelle version prend la main, on recharge la page une fois.
     let dejaRecharge = false;
     const surChangement = () => {

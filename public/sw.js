@@ -33,7 +33,14 @@ self.addEventListener('install', (evenement) => {
     (async () => {
       const cache = await caches.open(NOM_DU_CACHE);
       // addAll telecharge tous les fichiers d'un coup et les range dans le cache.
-      await cache.addAll(FICHIERS_A_PRECHARGER);
+      // { cache: 'reload' } oblige a les reprendre sur le serveur, sans passer
+      // par le petit cache du navigateur (GitHub Pages le garde 10 minutes).
+      // C'est surtout vital pour index.html, dont le nom ne change jamais :
+      // une ancienne copie pointerait vers des fichiers .js qui n'existent
+      // plus sur le serveur, et l'application s'ouvrirait sur une page blanche.
+      await cache.addAll(
+        FICHIERS_A_PRECHARGER.map((fichier) => new Request(fichier, { cache: 'reload' }))
+      );
     })()
   );
 });

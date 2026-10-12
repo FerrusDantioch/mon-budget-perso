@@ -296,6 +296,29 @@ export function PageReglages({ surMessage, modeHorsLignePret, allerVers }) {
         </p>
       </section>
 
+      {/* ================= A PROPOS ================= */}
+      {/* Le lien s'ouvre dans un nouvel onglet, pour ne pas quitter l'application. */}
+      <section className="carte" aria-labelledby="titre-a-propos">
+        <div className="carte-titre">
+          <h2 id="titre-a-propos">À propos</h2>
+        </div>
+        <p>
+          Cette application a été conçue et développée par Ferrus Dantioch, avec
+          l'aide de Claude (une intelligence artificielle d'Anthropic).
+        </p>
+        <p className="champ-aide">
+          Voir d'autres projets :{' '}
+          <a
+            className="lien-discret"
+            href="https://ferrusdantioch.github.io/omni-systeme/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            https://ferrusdantioch.github.io/omni-systeme/
+          </a>
+        </p>
+      </section>
+
       <p className="champ-aide" style={{ textAlign: 'center' }}>
         Budget — version 2.0
       </p>

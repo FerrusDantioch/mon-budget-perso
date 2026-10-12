@@ -2,7 +2,7 @@
   "name": "Budget — mes dépenses",
   "short_name": "Budget",
   "description": "Gestion de budget personnel, 100% hors-ligne et chiffrée. Aucune donnée ne quitte votre appareil.",
-  "id": ".",
+  "id": "/mon-budget-perso/",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

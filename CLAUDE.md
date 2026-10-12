@@ -51,3 +51,18 @@ vérifier que la balise CSP injectée au build reste cohérente.
   https://ferrusdantioch.github.io/mon-budget-perso/
 - Code et commentaires en français, rédigés pour un développeur débutant :
   conserver ce niveau d'explication.
+
+## ⚠️ Champ `id` du manifeste : nom du dossier, jamais `./`
+
+`public/manifest.webmanifest` contient `"id": "/mon-budget-perso/"`. Chrome résout `id` par rapport à la
+**racine du domaine** (`https://ferrusdantioch.github.io/`), pas par
+rapport au dossier de l'application : `"id": "./"` (ou `"."`) désignait
+donc la racine du site, identité partagée par toutes les applications
+publiées sur `ferrusdantioch.github.io`. Chrome pouvait alors confondre
+les applications entre elles (« Cette appli est déjà installée » en
+essayant d'en installer une autre — vu sur Android en octobre 2026).
+C'est une exception voulue à la règle des chemins relatifs.
+
+Ne plus changer cette valeur : pour Chrome, une application déjà installée
+dont l'`id` change devient une autre application (il faut la désinstaller
+puis la réinstaller pour qu'elle reprenne les mises à jour).

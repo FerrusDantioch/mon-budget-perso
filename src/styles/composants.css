@@ -438,6 +438,14 @@
   color: var(--texte-doux);
   margin-top: 0.25rem;
 }
+/* Lien en texte simple (section « A propos » des reglages) : meme couleur
+   que le texte autour, juste souligne. Une adresse trop longue pour un petit
+   ecran passe a la ligne au lieu de deborder. */
+.lien-discret {
+  color: inherit;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
 .champ-erreur {
   display: block;
   font-size: 0.82rem;

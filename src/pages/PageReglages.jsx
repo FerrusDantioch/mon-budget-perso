@@ -317,6 +317,13 @@ export function PageReglages({ surMessage, modeHorsLignePret, allerVers }) {
             https://ferrusdantioch.github.io/omni-systeme/
           </a>
         </p>
+        {/* Note d'installation : Chrome Android n'installe qu'une seule
+            application par adresse de site, et toutes les applications de
+            ferrusdantioch.github.io partagent la même. Masquée une fois
+            l'application installée (règle .note-installation de la feuille de style). */}
+        <p className="champ-aide note-installation">
+          <strong>Installation sur Android&nbsp;:</strong> si Chrome indique «&nbsp;Cette appli est déjà installée&nbsp;» alors qu'elle ne l'est pas, c'est une limite de Chrome quand une autre application de ce site est déjà installée. Utilisez un autre navigateur (Brave, par exemple), ou choisissez «&nbsp;Créer un raccourci&nbsp;».
+        </p>
       </section>
 
       <p className="champ-aide" style={{ textAlign: 'center' }}>

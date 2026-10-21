@@ -59,6 +59,27 @@ export function useServiceWorker() {
         console.warn('Mode hors-ligne indisponible :', probleme);
       });
 
+    // STOCKAGE PERSISTANT
+    // Par defaut, le navigateur peut effacer de lui-meme la copie hors-ligne
+    // (et les donnees du budget) s'il manque de place ou si l'application est
+    // peu utilisee : elle ne s'ouvrirait alors plus sans reseau. persist() lui
+    // demande de les garder. Certains navigateurs (Firefox) affichent alors
+    // une fenetre d'autorisation : pour ne jamais en faire surgir une au
+    // demarrage, on ne demande que si le navigateur a deja repondu « accorde »
+    // (Chrome, pour une application installee, sans rien afficher). Sinon, on
+    // renonce en silence.
+    if (navigator.storage && navigator.storage.persist && navigator.permissions) {
+      navigator.storage
+        .persisted()
+        .then((dejaPersistant) => {
+          if (dejaPersistant) return undefined;
+          return navigator.permissions
+            .query({ name: 'persistent-storage' })
+            .then((etat) => (etat.state === 'granted' ? navigator.storage.persist() : undefined));
+        })
+        .catch(() => {});
+    }
+
     // Quand la nouvelle version prend la main, on recharge la page une fois.
     let dejaRecharge = false;
     const surChangement = () => {

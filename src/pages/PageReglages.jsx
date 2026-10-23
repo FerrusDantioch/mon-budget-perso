@@ -317,6 +317,17 @@ export function PageReglages({ surMessage, modeHorsLignePret, allerVers }) {
             https://ferrusdantioch.github.io/omni-systeme/
           </a>
         </p>
+        {/* Retours : une adresse-alias (Proton) créée pour ça. Le lien ouvre seulement
+            l'application de messagerie, adresse et sujet déjà remplis : rien ne part tout seul. */}
+        <p className="champ-aide">
+          Une idée, une remarque, un souci ? Vos retours sont les bienvenus :{' '}
+          <a
+            className="lien-discret"
+            href="mailto:omni-systeme.choking513@passmail.net?subject=Retour%20sur%20Mon%20Budget"
+          >
+            omni-systeme.choking513@passmail.net
+          </a>
+        </p>
         {/* Note d'installation : Chrome Android n'installe qu'une seule
             application par adresse de site, et toutes les applications de
             ferrusdantioch.github.io partagent la même. Masquée une fois

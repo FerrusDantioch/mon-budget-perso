@@ -317,6 +317,19 @@ export function PageReglages({ surMessage, modeHorsLignePret, allerVers }) {
             https://ferrusdantioch.github.io/omni-systeme/
           </a>
         </p>
+        {/* Licence du code : texte complet dans le fichier LICENSE du dépôt. */}
+        <p className="champ-aide">
+          © 2026 Ferrus Dantioch —{' '}
+          <a
+            className="lien-discret"
+            href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.fr"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Creative Commons BY-NC-ND 4.0
+          </a>{' '}
+          : partage autorisé en citant l'auteur, sans usage commercial ni modification.
+        </p>
         {/* Retours : une adresse-alias (Proton) créée pour ça. Le lien ouvre seulement
             l'application de messagerie, adresse et sujet déjà remplis : rien ne part tout seul. */}
         <p className="champ-aide">

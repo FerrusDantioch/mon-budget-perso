@@ -2,16 +2,19 @@
   "name": "omni-budget",
   "private": true,
   "version": "1.0.0",
+  "license": "CC-BY-NC-ND-4.0",
   "description": "Gestion de budget personnel — 100% hors-ligne, aucune donnee envoyee sur Internet",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/licences-tierces.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
     "icones": "node scripts/generer-icones.mjs",
     "ocr": "node scripts/preparer-ocr.mjs",
+    "licences": "node scripts/licences-tierces.mjs",
     "preparer": "npm run icones && npm run ocr"
   },
   "dependencies": {

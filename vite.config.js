@@ -111,9 +111,15 @@ function pluginServiceWorker() {
       // pour une fonction que beaucoup n'utiliseront jamais. Il est donc mis
       // en cache seulement au premier scan, par la strategie "cache d'abord"
       // du service worker.
+      // licences-tierces.txt (textes de licence des bibliotheques) ne sert pas
+      // au fonctionnement : inutile de le telecharger a l'installation.
       const fichiers = listerFichiers(dossierSortie)
         .filter(
-          (f) => f !== 'sw.js' && !f.endsWith('.map') && !f.startsWith('ocr/')
+          (f) =>
+            f !== 'sw.js' &&
+            !f.endsWith('.map') &&
+            !f.startsWith('ocr/') &&
+            f !== 'licences-tierces.txt'
         )
         .sort();
 

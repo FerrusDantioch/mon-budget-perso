@@ -44,6 +44,11 @@ vérifier que la balise CSP injectée au build reste cohérente.
 
 ## À savoir
 
+- **Licences tierces** : `public/licences-tierces.txt` rassemble les textes de
+  licence des bibliothèques publiées. Il est refait par
+  `scripts/licences-tierces.mjs`, lancé automatiquement avant chaque
+  `npm run build` (script `prebuild`). Après un changement de dépendances,
+  committer le fichier refait.
 - Le moteur de reconnaissance de texte (`ocr/`, ~6 Mo) est **volontairement
   exclu du préchargement** : il n'est mis en cache qu'au premier scan.
 - Déploiement automatique par GitHub Actions

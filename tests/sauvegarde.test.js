@@ -288,7 +288,7 @@ describe('export tableur (CSV)', () => {
 
 describe('nom de fichier', () => {
   it('contient la date du jour', () => {
-    const nom = nomDeFichier('budget-sauvegarde', 'json');
-    expect(nom).toMatch(/^budget-sauvegarde-\d{4}-\d{2}-\d{2}\.json$/);
+    const nom = nomDeFichier('omni-budget-sauvegarde', 'json');
+    expect(nom).toMatch(/^omni-budget-sauvegarde-\d{4}-\d{2}-\d{2}\.json$/);
   });
 });

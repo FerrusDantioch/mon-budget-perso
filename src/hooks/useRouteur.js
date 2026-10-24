@@ -2,7 +2,7 @@
  * NAVIGATION ENTRE LES ECRANS
  *
  * Plutot que d'installer une librairie de routage, on utilise l'adresse
- * « avec un diese » : .../Budget/#/depenses
+ * « avec un diese » : .../omni-budget/#/depenses
  *
  * Deux avantages decisifs :
  *   1. GitHub Pages ne sait pas rediriger les adresses inconnues vers la page

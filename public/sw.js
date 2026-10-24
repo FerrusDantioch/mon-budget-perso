@@ -20,7 +20,7 @@ const BASE = "__BASE__";
 
 // Nom de l'armoire de stockage. Il change a chaque nouvelle version de
 // l'application, ce qui permet de faire le menage automatiquement.
-const NOM_DU_CACHE = `budget-${VERSION_CACHE}`;
+const NOM_DU_CACHE = `omni-budget-${VERSION_CACHE}`;
 
 // La page d'accueil : c'est elle qu'on renvoie pour toute navigation.
 const PAGE_ACCUEIL = `${BASE}index.html`;
@@ -54,7 +54,8 @@ self.addEventListener('activate', (evenement) => {
       const noms = await caches.keys();
       await Promise.all(
         noms
-          .filter((nom) => nom.startsWith('budget-') && nom !== NOM_DU_CACHE)
+          // « budget- » : début du nom des caches quand l'application s'appelait « Budget ».
+          .filter((nom) => (nom.startsWith('omni-budget-') || nom.startsWith('budget-')) && nom !== NOM_DU_CACHE)
           .map((nom) => caches.delete(nom))
       );
       // On prend le controle des onglets deja ouverts, sans attendre un rechargement.

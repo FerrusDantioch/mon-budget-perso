@@ -1,4 +1,4 @@
-# Budget — mes dépenses
+# Omni-Budget — mes dépenses
 
 Application de gestion de budget personnel qui fonctionne **entièrement sur votre
 appareil**, hors-ligne, et dont **toutes les données sont chiffrées**. Aucun
@@ -104,8 +104,8 @@ Fabrique les icônes **et** installe le moteur de reconnaissance de texte dans
 npm run dev
 ```
 
-Aperçu pendant le développement, à l'adresse affichée **suivie de `/Budget/`** —
-par exemple <http://localhost:5173/Budget/>.
+Aperçu pendant le développement, à l'adresse affichée **suivie de `/omni-budget/`** —
+par exemple <http://localhost:5173/omni-budget/>.
 
 ```bash
 npm test
@@ -127,10 +127,10 @@ npm run preview    # affiche la version finale, mode hors-ligne actif
 Ouvrez `vite.config.js`. Tout en haut se trouve **la seule ligne à adapter** :
 
 ```js
-const NOM_DU_DEPOT = 'Budget';
+const NOM_DU_DEPOT = 'omni-budget';
 ```
 
-Remplacez `Budget` par le nom exact de votre dépôt GitHub, majuscules comprises.
+Remplacez `omni-budget` par le nom exact de votre dépôt GitHub, majuscules comprises.
 
 > **Pourquoi c'est important** : sur GitHub Pages, le site est servi à l'adresse
 > `https://votre-pseudo.github.io/NOM-DU-DEPOT/`. Si ce nom est faux, la page
@@ -278,7 +278,7 @@ dépense : elle doit s'enregistrer sans problème.
 ## 5. Structure du projet
 
 ```
-Budget/
+omni-budget/
 ├── .github/workflows/deploiement.yml   Publication automatique
 ├── public/
 │   ├── icones/                Icônes générées (npm run icones)

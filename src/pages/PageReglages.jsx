@@ -323,7 +323,7 @@ export function PageReglages({ surMessage, modeHorsLignePret, allerVers }) {
           Une idée, une remarque, un souci ? Vos retours sont les bienvenus :{' '}
           <a
             className="lien-discret"
-            href="mailto:omni-systeme.choking513@passmail.net?subject=Retour%20sur%20Mon%20Budget"
+            href="mailto:omni-systeme.choking513@passmail.net?subject=Retour%20sur%20Omni-Budget"
           >
             omni-systeme.choking513@passmail.net
           </a>
@@ -338,7 +338,7 @@ export function PageReglages({ surMessage, modeHorsLignePret, allerVers }) {
       </section>
 
       <p className="champ-aide" style={{ textAlign: 'center' }}>
-        Budget — version 2.0
+        Omni-Budget — version 2.0
       </p>
 
       {confirmationEffacement && (

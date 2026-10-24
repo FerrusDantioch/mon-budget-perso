@@ -79,7 +79,7 @@ export function EcranVerrouillage() {
     <main className="ecran-verrouillage">
       <div className="verrouillage-contenu">
         <div className="verrouillage-logo" aria-hidden="true">🔒</div>
-        <h1>Budget</h1>
+        <h1>Omni-Budget</h1>
         <p className="montant-secondaire">
           {blocage.bloque
             ? 'Déverrouillage temporairement bloqué'

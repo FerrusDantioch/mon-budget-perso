@@ -61,7 +61,7 @@ export function PageSauvegarde({ surMessage }) {
     try {
       const contenu = await creerSauvegardeChiffree(motDePasse);
       telechargerFichier(
-        nomDeFichier('budget-sauvegarde', 'json'),
+        nomDeFichier('omni-budget-sauvegarde', 'json'),
         contenu,
         'application/json'
       );

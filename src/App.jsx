@@ -132,7 +132,7 @@ function ApplicationDeverrouillee({ serviceWorker }) {
 
   // Le titre de l'onglet suit l'ecran affiche.
   useEffect(() => {
-    document.title = `${titre} — Budget`;
+    document.title = `${titre} — Omni-Budget`;
   }, [titre]);
 
   // Raccourci « Ajouter une dépense » (appui long sur l'icone).

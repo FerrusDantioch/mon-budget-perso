@@ -1,4 +1,4 @@
-# Mon Budget Perso — notes pour Claude
+# Omni-Budget — notes pour Claude
 
 PWA de gestion de budget en **React + Vite**. Contrairement aux autres PWA de
 l'utilisateur, ce projet passe par une **étape de compilation** : les sources
@@ -32,7 +32,7 @@ taille en octets** passerait inaperçue. Dans ce cas rare, forcer le changement
 `vite.config.js` fixe en dur :
 
 ```js
-const NOM_DU_DEPOT = 'mon-budget-perso';
+const NOM_DU_DEPOT = 'omni-budget';
 const BASE = `/${NOM_DU_DEPOT}/`;
 ```
 
@@ -48,13 +48,13 @@ vérifier que la balise CSP injectée au build reste cohérente.
   exclu du préchargement** : il n'est mis en cache qu'au premier scan.
 - Déploiement automatique par GitHub Actions
   (`.github/workflows/deploiement.yml`) à chaque envoi sur `main` →
-  https://ferrusdantioch.github.io/mon-budget-perso/
+  https://ferrusdantioch.github.io/omni-budget/
 - Code et commentaires en français, rédigés pour un développeur débutant :
   conserver ce niveau d'explication.
 
 ## Champ `id` du manifeste : nom du dossier, jamais `./`
 
-`public/manifest.webmanifest` contient `"id": "/mon-budget-perso/"`. Chrome résout `id` par rapport à
+`public/manifest.webmanifest` contient `"id": "/omni-budget/"`. Chrome résout `id` par rapport à
 la **racine du domaine** (`https://ferrusdantioch.github.io/`), pas par
 rapport au dossier de l'application : `"id": "./"` (ou `"."`) donnait donc
 l'identité de la racine du site, la même pour toutes les applications qui
@@ -63,6 +63,11 @@ l'utilisaient. C'est une exception voulue à la règle des chemins relatifs.
 Ne plus changer cette valeur : pour Chrome, une application déjà installée
 dont l'`id` change devient une autre application (il faut la désinstaller
 puis la réinstaller pour qu'elle reprenne les mises à jour).
+
+Exception unique (octobre 2026) : l'application s'appelait « Budget — mes dépenses » et
+vivait à `/mon-budget-perso/`. Le renommage du dépôt a changé son adresse,
+donc son `id` : les personnes qui l'avaient installée doivent la réinstaller
+depuis la nouvelle adresse (leurs données restent, le stockage n'a pas changé).
 
 ## ⚠️ Plusieurs applications sur `ferrusdantioch.github.io` : limite de Chrome Android
 

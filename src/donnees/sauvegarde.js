@@ -308,7 +308,7 @@ export function telechargerFichier(nomDuFichier, contenu, typeMime) {
   setTimeout(() => URL.revokeObjectURL(adresse), 10000);
 }
 
-/** Nom de fichier horodate : "budget-sauvegarde-2026-09-08.json". */
+/** Nom de fichier horodate : "omni-budget-sauvegarde-2026-09-08.json". */
 export function nomDeFichier(prefixe, extension) {
   const maintenant = new Date();
   const jour = [

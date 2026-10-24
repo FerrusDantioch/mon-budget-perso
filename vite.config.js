@@ -15,8 +15,8 @@ import crypto from 'node:crypto';
 //     https://VOTRE-PSEUDO.github.io/NOM-DU-DEPOT/
 // Le navigateur doit donc chercher les fichiers dans le sous-dossier /NOM-DU-DEPOT/.
 // Si cette valeur est fausse, la page s'affichera blanche et les icones seront cassees.
-// Remplacez "Budget" par le nom exact de votre depot GitHub (respectez les majuscules).
-const NOM_DU_DEPOT = 'mon-budget-perso';
+// Remplacez "omni-budget" par le nom exact de votre depot GitHub (respectez les majuscules).
+const NOM_DU_DEPOT = 'omni-budget';
 const BASE = `/${NOM_DU_DEPOT}/`;
 
 // ---------------------------------------------------------------------------

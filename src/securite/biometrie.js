@@ -86,12 +86,12 @@ export async function inscrireAppareil() {
     identifiants = await navigator.credentials.create({
       publicKey: {
         challenge: octetsAleatoires(32),
-        rp: { name: 'Budget' },
+        rp: { name: 'Omni-Budget' },
         user: {
           // Aucune donnee personnelle : l'application n'a pas de comptes.
           id: octetsAleatoires(16),
           name: 'budget-local',
-          displayName: 'Budget',
+          displayName: 'Omni-Budget',
         },
         pubKeyCredParams: [
           { type: 'public-key', alg: -7 }, // ES256

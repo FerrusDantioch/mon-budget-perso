@@ -1,8 +1,8 @@
 {
-  "name": "Budget — mes dépenses",
-  "short_name": "Budget",
+  "name": "Omni-Budget — mes dépenses",
+  "short_name": "Omni-Budget",
   "description": "Gestion de budget personnel, 100% hors-ligne et chiffrée. Aucune donnée ne quitte votre appareil.",
-  "id": "/mon-budget-perso/",
+  "id": "/omni-budget/",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
